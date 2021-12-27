@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+  <!-- 引入样式 -->
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <!-- 引入组件库 -->
+  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="//mozilla.github.io/pdf.js/build/pdf.js"></script>
+  <style type="text/css">
+    .container {
+      margin: 50px auto;
+      width: 60%;
+    }
+    .title {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" class="container">
+    <div>
+      <h2>
+        yu-tou 个人公开分享资料整理
+        <a href="https://github.com/yu-tou/my-public-share-keys" target="_blank">
+          <img src="https://img.shields.io/badge/github-%23121011.svg?style=flat-square&logo=github&logoColor=white"/>
+        </a>
+      </h2>
+      <p>这是一个用来整理个人在各种场合公开分享的资料的仓库，一些 16 年之前的资料已经找不到，主要是一些最近的资料，希望对相关的同学有所帮助。</p>
+      <p>因部分幻灯片内部有一些特效，所以只能以 keynote 格式来分享，这是苹果官方的演示文稿的格式，如您用的不是 mac，但是需要相关资料，可以联系我或者等我有空上传 pdf 资料。我的联系方式见我 github 首页。</p>
+      <p>一些敏感内容均已删除。</p>
+    </div>
+    <el-collapse v-model="activeNames">
+      <el-collapse-item v-for="item in list" :title="item.year" :name="item.year" :key="item.year">
+        <a class="title" :href="`./${item.year}/${file}`" target="_blank" v-for="(file, fileIndex) in item.children" :key="fileIndex">{{ file }}</a>
+      </el-collapse-item>
+    </el-collapse>
+  </div>
+  <script>
+    new Vue({
+      el: '#app',
+      data() {
+        return {
+          list: [],
+          activeNames: ['2021'],
+        }
+      },
+      mounted() {
+        this.getData();
+      },
+      methods: {
+        getData() {
+          axios.get(`./file.json`)
+          .then(res => {
+            this.list = this.sortData(res.data)
+          })
+        },
+        sortData(arr) {
+          return arr.sort(this.sort)
+        },
+        sort(a, b) {
+          return Number(a.year) - Number(b.year)
+        }
+      }
+    })
+  </script>
+</body>
+</html>
